@@ -14,7 +14,7 @@ function scrollTo(element, from, to, duration, currentTime = 0) {
   let position = delta * (Math.sin(progress));
   setTimeout(() => {
     element.scrollTop = from + position;
-    this.scrollTo(element, from, to, duration, currentTime + 10);
+    scrollTo(element, from, to, duration, currentTime + 10);
   }, 10);
 }
 

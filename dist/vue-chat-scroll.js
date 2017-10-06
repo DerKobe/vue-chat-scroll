@@ -12,8 +12,6 @@
  */
 
 function scrollTo(element, from, to, duration) {
-  var _this = this;
-
   var currentTime = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 0;
 
   if (from <= 0) {
@@ -30,7 +28,7 @@ function scrollTo(element, from, to, duration) {
   var position = delta * Math.sin(progress);
   setTimeout(function () {
     element.scrollTop = from + position;
-    _this.scrollTo(element, from, to, duration, currentTime + 10);
+    scrollTo(element, from, to, duration, currentTime + 10);
   }, 10);
 }
 
