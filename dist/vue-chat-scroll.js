@@ -11,30 +11,58 @@
  * @file v-chat-scroll  directive definition
  */
 
+function scrollTo(element, from, to, duration) {
+  var _this = this;
+
+  var currentTime = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 0;
+
+  if (from <= 0) {
+    from = 0;
+  }
+  if (to <= 0) {
+    to = 0;
+  }
+  if (currentTime >= duration) {
+    return;
+  }
+  var delta = to - from;
+  var progress = currentTime / duration * Math.PI / 2;
+  var position = delta * Math.sin(progress);
+  setTimeout(function () {
+    element.scrollTop = from + position;
+    _this.scrollTo(element, from, to, duration, currentTime + 10);
+  }, 10);
+}
+
 var scrollToBottom = function scrollToBottom(el) {
-    el.scrollTop = el.scrollHeight;
+  // el.scrollTop = el.scrollHeight;
+  scrollTo(el, el.scrollTop, el.scrollHeight, 1000);
 };
 
 var vChatScroll = {
-    bind: function bind(el, binding) {
-        var timeout = void 0;
-        var scrolled = false;
+  bind: function bind(el, binding) {
+    var timeout = void 0;
+    var scrolled = false;
 
-        el.addEventListener('scroll', function (e) {
-            if (timeout) window.clearTimeout(timeout);
-            timeout = window.setTimeout(function () {
-                scrolled = el.scrollTop + el.clientHeight + 1 < el.scrollHeight;
-            }, 200);
-        });
+    el.addEventListener('scroll', function () {
+      if (timeout) {
+        window.clearTimeout(timeout);
+      }
+      timeout = window.setTimeout(function () {
+        scrolled = el.scrollTop + el.clientHeight + 1 < el.scrollHeight;
+      }, 200);
+    });
 
-        new MutationObserver(function (e) {
-            var config = binding.value || {};
-            var pause = config.always === false && scrolled;
-            if (pause || e[e.length - 1].addedNodes.length != 1) return;
-            scrollToBottom(el);
-        }).observe(el, { childList: true, subtree: true });
-    },
-    inserted: scrollToBottom
+    new MutationObserver(function (e) {
+      var config = binding.value || {};
+      var pause = config.always === false && scrolled;
+      if (pause || e[e.length - 1].addedNodes.length !== 1) {
+        return;
+      }
+      scrollToBottom(el);
+    }).observe(el, { childList: true, subtree: true });
+  },
+  inserted: scrollToBottom
 };
 
 /**
