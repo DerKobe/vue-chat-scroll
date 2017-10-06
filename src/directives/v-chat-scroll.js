@@ -18,10 +18,13 @@ function scrollTo(element, from, to, duration, currentTime = 0) {
   }, 10);
 }
 
-const scrollToBottom = el => {
-  // el.scrollTop = el.scrollHeight;
-  scrollTo(el, el.scrollTop, el.scrollHeight, 1000);
-};
+function scrollToBottom(el, smooth = false) {
+  if (smooth) {
+    scrollTo(el, el.scrollTop, el.scrollHeight, 1000);
+  } else {
+    el.scrollTop = el.scrollHeight;
+  }
+}
 
 const vChatScroll = {
   bind: (el, binding) => {
@@ -43,7 +46,7 @@ const vChatScroll = {
       if (pause || e[e.length - 1].addedNodes.length !== 1) {
         return;
       }
-      scrollToBottom(el);
+      scrollToBottom(el, true);
     })).observe(el, {childList: true, subtree: true});
   },
   inserted: scrollToBottom

@@ -32,10 +32,15 @@ function scrollTo(element, from, to, duration) {
   }, 10);
 }
 
-var scrollToBottom = function scrollToBottom(el) {
-  // el.scrollTop = el.scrollHeight;
-  scrollTo(el, el.scrollTop, el.scrollHeight, 1000);
-};
+function scrollToBottom(el) {
+  var smooth = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+
+  if (smooth) {
+    scrollTo(el, el.scrollTop, el.scrollHeight, 1000);
+  } else {
+    el.scrollTop = el.scrollHeight;
+  }
+}
 
 var vChatScroll = {
   bind: function bind(el, binding) {
@@ -57,7 +62,7 @@ var vChatScroll = {
       if (pause || e[e.length - 1].addedNodes.length !== 1) {
         return;
       }
-      scrollToBottom(el);
+      scrollToBottom(el, true);
     }).observe(el, { childList: true, subtree: true });
   },
   inserted: scrollToBottom
