@@ -41,12 +41,13 @@ const vChatScroll = {
     });
 
     (new MutationObserver(e => {
-      let config = binding.value || {};
-      let pause = config.always === false && scrolled;
+      const config = binding.value || {};
+      const pause = config.always === false && scrolled;
+      const smooth = typeof config.smooth === 'undefined' ? true : config.smooth;
       if (pause || e[e.length - 1].addedNodes.length !== 1) {
         return;
       }
-      scrollToBottom(el, true);
+      scrollToBottom(el, smooth);
     })).observe(el, {childList: true, subtree: true});
   },
   inserted: scrollToBottom

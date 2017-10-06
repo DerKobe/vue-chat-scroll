@@ -59,10 +59,11 @@ var vChatScroll = {
     new MutationObserver(function (e) {
       var config = binding.value || {};
       var pause = config.always === false && scrolled;
+      var smooth = typeof config.smooth === 'undefined' ? true : config.smooth;
       if (pause || e[e.length - 1].addedNodes.length !== 1) {
         return;
       }
-      scrollToBottom(el, true);
+      scrollToBottom(el, smooth);
     }).observe(el, { childList: true, subtree: true });
   },
   inserted: scrollToBottom
