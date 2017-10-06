@@ -5,13 +5,22 @@
  * @file v-chat-scroll  directive definition
  */
 
+function scrollTo(element, from, to, duration, currentTime = 0) {
+  if (from <= 0) { from = 0; }
+  if (to <= 0) { to = 0; }
+  if (currentTime >= duration) { return; }
+  let delta = to - from;
+  let progress = currentTime / duration * Math.PI / 2;
+  let position = delta * (Math.sin(progress));
+  setTimeout(() => {
+    element.scrollTop = from + position;
+    this.scrollTo(element, from, to, duration, currentTime + 10);
+  }, 10);
+}
+
 const scrollToBottom = el => {
   // el.scrollTop = el.scrollHeight;
-  el.scroll({
-    top: el.scrollHeight,
-    left: 0,
-    behavior: 'smooth'
-  });
+  scrollTo(el, el.scrollTop, el.scrollHeight, 1000);
 };
 
 const vChatScroll = {
