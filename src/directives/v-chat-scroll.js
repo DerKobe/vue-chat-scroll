@@ -5,28 +5,24 @@
  * @file v-chat-scroll  directive definition
  */
 
-function scrollTo(element, from, to, duration, currentTime = 0) {
-  if (from <= 0) { from = 0; }
-  if (to <= 0) { to = 0; }
-  if (currentTime >= duration) { return; }
-  let delta = to - from;
-  let progress = currentTime / duration * Math.PI / 2;
-  let position = delta * (Math.sin(progress));
-  setTimeout(() => {
-    element.scrollTop = from + position;
-    scrollTo(element, from, to, duration, currentTime + 10);
-  }, 10);
-}
-
-function scrollToBottom(el, smooth = false) {
+function scrollToBottom(el, smooth) {
   if (smooth) {
-    scrollTo(el, el.scrollTop, el.scrollHeight, 1000);
+    el.scroll({ top: el.scrollHeight, left: 0, behavior: 'smooth' });
   } else {
     el.scrollTop = el.scrollHeight;
   }
 }
 
 const vChatScroll = {
+  inserted: el => scrollToBottom(el, false),
+
+  componentUpdated: function(el, binding) {
+    const smooth = ((binding || {}).value || {}).smooth;
+    if (typeof smooth !== 'undefined') {
+      el.dataset.smooth = smooth;
+    }
+  },
+
   bind: (el, binding) => {
     let timeout;
     let scrolled = false;
@@ -43,14 +39,17 @@ const vChatScroll = {
     (new MutationObserver(e => {
       const config = binding.value || {};
       const pause = config.always === false && scrolled;
-      const smooth = typeof config.smooth === 'undefined' ? true : config.smooth;
       if (pause || e[e.length - 1].addedNodes.length !== 1) {
         return;
       }
-      scrollToBottom(el, smooth);
-    })).observe(el, {childList: true, subtree: true});
-  },
-  inserted: scrollToBottom
+
+      if (typeof el.dataset.smooth === 'undefined') {
+        el.dataset.smooth = typeof config.smooth === 'undefined' ? true : config.smooth;
+      }
+
+      scrollToBottom(el, el.dataset.smooth === 'true');
+    })).observe(el, { childList: true, subtree: true });
+  }
 };
 
 export default vChatScroll;

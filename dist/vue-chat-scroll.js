@@ -11,38 +11,26 @@
  * @file v-chat-scroll  directive definition
  */
 
-function scrollTo(element, from, to, duration) {
-  var currentTime = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 0;
-
-  if (from <= 0) {
-    from = 0;
-  }
-  if (to <= 0) {
-    to = 0;
-  }
-  if (currentTime >= duration) {
-    return;
-  }
-  var delta = to - from;
-  var progress = currentTime / duration * Math.PI / 2;
-  var position = delta * Math.sin(progress);
-  setTimeout(function () {
-    element.scrollTop = from + position;
-    scrollTo(element, from, to, duration, currentTime + 10);
-  }, 10);
-}
-
-function scrollToBottom(el) {
-  var smooth = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
-
+function scrollToBottom(el, smooth) {
   if (smooth) {
-    scrollTo(el, el.scrollTop, el.scrollHeight, 1000);
+    el.scroll({ top: el.scrollHeight, left: 0, behavior: 'smooth' });
   } else {
     el.scrollTop = el.scrollHeight;
   }
 }
 
 var vChatScroll = {
+  inserted: function inserted(el) {
+    return scrollToBottom(el, false);
+  },
+
+  componentUpdated: function componentUpdated(el, binding) {
+    var smooth = ((binding || {}).value || {}).smooth;
+    if (typeof smooth !== 'undefined') {
+      el.dataset.smooth = smooth;
+    }
+  },
+
   bind: function bind(el, binding) {
     var timeout = void 0;
     var scrolled = false;
@@ -59,14 +47,17 @@ var vChatScroll = {
     new MutationObserver(function (e) {
       var config = binding.value || {};
       var pause = config.always === false && scrolled;
-      var smooth = typeof config.smooth === 'undefined' ? true : config.smooth;
       if (pause || e[e.length - 1].addedNodes.length !== 1) {
         return;
       }
-      scrollToBottom(el, smooth);
+
+      if (typeof el.dataset.smooth === 'undefined') {
+        el.dataset.smooth = typeof config.smooth === 'undefined' ? true : config.smooth;
+      }
+
+      scrollToBottom(el, el.dataset.smooth === 'true');
     }).observe(el, { childList: true, subtree: true });
-  },
-  inserted: scrollToBottom
+  }
 };
 
 /**
