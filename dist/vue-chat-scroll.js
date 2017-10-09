@@ -44,10 +44,16 @@ var vChatScroll = {
       }, 200);
     });
 
-    new MutationObserver(function (e) {
+    new MutationObserver(function (mutations) {
       var config = binding.value || {};
-      var pause = config.always === false && scrolled;
-      if (pause || e[e.length - 1].addedNodes.length !== 1) {
+      if (config.always === false && scrolled) {
+        return;
+      }
+
+      var lastMutation = mutations[mutations.length - 1];
+      console.debug(lastMutation);
+
+      if (!lastMutation.addedNodes.length && !lastMutation.removedNodes.length) {
         return;
       }
 
@@ -56,7 +62,7 @@ var vChatScroll = {
       }
 
       scrollToBottom(el, el.dataset.smooth === 'true');
-    }).observe(el, { childList: true, subtree: true });
+    }).observe(el, { childList: true, subtree: false });
   }
 };
 
