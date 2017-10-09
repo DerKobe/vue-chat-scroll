@@ -51,7 +51,6 @@ var vChatScroll = {
       }
 
       var lastMutation = mutations[mutations.length - 1];
-      console.debug(lastMutation);
 
       if (!lastMutation.addedNodes.length && !lastMutation.removedNodes.length) {
         return;
