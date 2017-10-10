@@ -45,12 +45,15 @@ var vChatScroll = {
     });
 
     new MutationObserver(function (mutations) {
+      console.debug('MutationObserver triggered');
+
       var config = binding.value || {};
       if (config.always === false && scrolled) {
         return;
       }
 
       var lastMutation = mutations[mutations.length - 1];
+      console.debug({ added: lastMutation.addedNodes, removed: lastMutation.removedNodes });
 
       if (!lastMutation.addedNodes.length && !lastMutation.removedNodes.length) {
         return;

@@ -37,12 +37,15 @@ const vChatScroll = {
     });
 
     (new MutationObserver((mutations) => {
+      console.debug('MutationObserver triggered');
+
       const config = binding.value || {};
       if (config.always === false && scrolled) {
         return;
       }
 
       const lastMutation = mutations[mutations.length - 1];
+      console.debug({ added: lastMutation.addedNodes, removed: lastMutation.removedNodes});
 
       if (!lastMutation.addedNodes.length && !lastMutation.removedNodes.length) {
         return;
