@@ -1,14 +1,15 @@
-/**
+/*
  * @name VueJS vChatScroll (vue-chat-scroll)
  * @description Monitors an element and scrolls to the bottom if a new child is added
  * @author Theodore Messinezis <theo@theomessin.com>
  * @file v-chat-scroll  directive definition
  */
+import zenscroll from 'zenscroll';
 
 function scrollToBottom(el, smooth) {
-  console.debug('scrollToBottom', el.scrollHeight);
   if (smooth) {
-    el.scroll({ top: el.scrollHeight, left: 0, behavior: 'smooth' });
+    // el.scroll({ top: el.scrollHeight, left: 0, behavior: 'smooth' });
+    zenscroll.createScroller(el, 500, 30).toY(el.scrollHeight);
   } else {
     el.scrollTop = el.scrollHeight;
   }
